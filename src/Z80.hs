@@ -8,7 +8,7 @@ import           Data.Bits
 reset :: FullState
 reset = FullState istate cstate
   where
-    istate = IState
+    istate = RegisterState
       { _a = 0
       , _b = 0
       , _c = 0
@@ -20,11 +20,10 @@ reset = FullState istate cstate
       , _pc = 0
       , _sp = 0
       }
-    cstate = ClockState { _cm = 0, _ct = 0 }
+    cstate = ClockState { _cc = 0 }
 
 exec :: FullState -> FullState
 exec s = undefined
-
 
 flagToInt :: Flag -> Int
 flagToInt Zero      = 0x80
