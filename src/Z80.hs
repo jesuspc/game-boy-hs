@@ -25,7 +25,8 @@ data Instruction = NOP
                  | LDrrar Register8Type Register8Type Register8Type
                  | INCrr Register8Type Register8Type
                  | INCr Register8Type
-                 | LDrr B8 Register8Type Register8Type
+                 | DECr Register8Type
+                 | LDrn Register8Type
                  deriving (Show)
 
 reset :: CpuState
@@ -54,6 +55,8 @@ inst 0x01 = LDrrnn B C
 inst 0x02 = LDrrar B C A
 inst 0x03 = INCrr B C
 inst 0x04 = INCr B
+inst 0x05 = DECr B
+inst 0x06 = LDrn B
 inst _    = error "Unknown Opcode"
 
 flagToInt :: Flag -> Int
@@ -82,9 +85,19 @@ runInstruction inst s = case inst of
                                             then 0
                                             else 0x80)
               & cpuS . clock . cc +~ 4
+  DECr r -> s & cpuS . reg . ls r -~ 1
+              & cpuS . reg . ls r %~ (.&. 0xFF)
+              & cpuS . reg . ls F %~ (\_ -> if s ^. cpuS . reg . ls r /= 0
+                                            then 0
+                                            else 0x80)
+              & cpuS . clock . cc +~ 4
+  LDrn r -> s & cpuS . reg . ls r %~ const (fst (MMU.rb ms' pc'))
+              & cpuS . reg . pc +~ 1
+              & cpuS . clock . cc +~ 8
   _   -> s
   where
     pc' = view (cpuS . reg . pc) s
+    ms' = view memS s
 
 ls :: Register8Type -> Lens' RegisterState Register8
 ls A = a
