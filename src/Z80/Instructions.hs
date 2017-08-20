@@ -5,6 +5,7 @@ module Z80.Instructions where
 
 import           Control.Lens
 import           Data.Bits
+import           Internal
 import           Z80.CPU
 
 data Instruction = LDrrnn B8 Register8Type Register8Type
@@ -15,9 +16,9 @@ data Instruction = LDrrnn B8 Register8Type Register8Type
 runInstruction :: Instruction -> FullState -> FullState
 runInstruction inst s = case inst of
   NOP         -> s & clock . cc +~ 4
-  INCrr r1 r2 -> s & reg . ls r2 %~ (\v -> (v + 1) .&. 255)
+  INCrr r1 r2 -> s & reg . ls r2 %~ (\v -> (v + 1) .&. 0xFF)
                    & reg %~ (\r -> if r ^. ls r2 == 0
-                                   then r & ls r1 %~ (\v -> (v + 1) .&. 255)
+                                   then r & ls r1 %~ (\v -> (v + 1) .&. 0xFF)
                                    else r)
                    & clock . cc +~ 8
   _ -> s

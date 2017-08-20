@@ -10,7 +10,6 @@ data Register8Type = A | B | C | D | E | H | L | F deriving (Show)
 type Register16 = Int
 type RegisterT = Register8
 type Clock = Int
-type B8 = Int -- 8bits
 
 data Flag = Zero
           | Operation
