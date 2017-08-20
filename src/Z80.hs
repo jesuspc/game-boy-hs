@@ -81,20 +81,19 @@ runInstruction inst s = case inst of
                    & cpuS . clock . cc +~ 8
   INCr r -> s & cpuS . reg . ls r +~ 1
               & cpuS . reg . ls r %~ (.&. 0xFF)
-              & cpuS . reg . ls F %~ (\_ -> if s ^. cpuS . reg . ls r /= 0
-                                            then 0
-                                            else 0x80)
+              & cpuS . reg  %~ (\rg -> if rg ^. ls r /= 0
+                                       then rg & ls F .~ 0
+                                       else rg & ls F .~ 0x80)
               & cpuS . clock . cc +~ 4
   DECr r -> s & cpuS . reg . ls r -~ 1
               & cpuS . reg . ls r %~ (.&. 0xFF)
-              & cpuS . reg . ls F %~ (\_ -> if s ^. cpuS . reg . ls r /= 0
-                                            then 0
-                                            else 0x80)
+              & cpuS . reg  %~ (\rg -> if rg ^. ls r /= 0
+                                       then rg & ls F .~ 0
+                                       else rg & ls F .~ 0x80)
               & cpuS . clock . cc +~ 4
   LDrn r -> s & cpuS . reg . ls r %~ const (fst (MMU.rb ms' pc'))
               & cpuS . reg . pc +~ 1
               & cpuS . clock . cc +~ 8
-  _   -> s
   where
     pc' = view (cpuS . reg . pc) s
     ms' = view memS s
