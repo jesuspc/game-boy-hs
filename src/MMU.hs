@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module MMU (rb) where--, rw, wb, ww) where
+module MMU (rb, wb, Memory (..)) where--, rw, wb, ww) where
 
 import           Control.Lens
 import           Data.Bits
@@ -48,3 +48,6 @@ rb m addr
       | otherwise = undefined
       where
         masked' = addr .&. 0x0F00
+
+wb :: Memory -> Address -> B8 -> Memory
+wb = undefined

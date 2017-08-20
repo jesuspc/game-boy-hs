@@ -37,9 +37,9 @@ data ClockState = ClockState
                   } deriving (Show)
 makeLenses ''ClockState
 
-data FullState = FullState
+data CpuState = CpuState
                  {
                    _reg   :: RegisterState,
                    _clock :: ClockState
                  } deriving (Show)
-makeLenses ''FullState
+makeLenses ''CpuState
